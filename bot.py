@@ -1,28 +1,25 @@
+import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackContext
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-TOKEN = "8159744777:AAFY3kPi-g_CofmxiX-tmcs3MHHcs26VQ-4"
+TOKEN = os.getenv("BOT_TOKEN")
+CHANNEL_LINK = "https://t.me/JamesDailyFXtrader"
 
-def start(update: Update, context: CallbackContext):
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
-        [InlineKeyboardButton("Join Channel 🚀", url="https://t.me/JamesDailyFXtrader")]
+        [InlineKeyboardButton("Join Channel 🚀", url=CHANNEL_LINK)]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    update.message.reply_text(
-        "👋 Welcome!\n\n"
-        "You’re one step away from real FX & Gold trading signals 📊\n\n"
-        "We provide daily entries and market insights from real traders.\n\n"
-        "👇 Join our official Telegram channel below",
+    await update.message.reply_text(
+        "Welcome 👋\n\n"
+        "This bot gives access to FX & Gold trade ideas.\n\n"
+        "👇 Tap below to join the channel",
         reply_markup=reply_markup
     )
 
-def main():
-    updater = Updater(TOKEN, use_context=True)
-    dp = updater.dispatcher
-    dp.add_handler(CommandHandler("start", start))
-    updater.start_polling()
-    updater.idle()
+app = ApplicationBuilder().token(TOKEN).build()
+app.add_handler(CommandHandler("start", start))
 
-if __name__ == "__main__":
-    main()
+print("Bot is running...")
+app.run_polling()
