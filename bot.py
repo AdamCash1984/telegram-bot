@@ -3,7 +3,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 TOKEN = os.getenv("BOT_TOKEN")
-CHANNEL_LINK = "https://t.me/JamesDailyFXtrader"
+CHANNEL_LINK = "https://t.me/dailysignalsbonanza"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
@@ -23,3 +23,4 @@ app.add_handler(CommandHandler("start", start))
 
 print("Bot is running...")
 app.run_polling()
+
