@@ -1,19 +1,38 @@
-from telegram import Update
+import os
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-# HARD-CODE TOKEN FOR PROOF (temporary)
-BOT_TOKEN = "8159744777:AAHoHByEugT7aaO3RDhNEerN3VFr88JdAwo"
+# Telegram Bot Token (from Railway Variables)
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+
+if not BOT_TOKEN:
+    raise RuntimeError("BOT_TOKEN is missing")
+
+# 🔗 YOUR CHANNEL LINK
+CHANNEL_URL = "https://t.me/dailysignalsbonanza"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    me = await context.bot.get_me()
+    keyboard = [
+        [InlineKeyboardButton("🚀 Join Channel", url=CHANNEL_URL)]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
 
     await update.message.reply_text(
-        f"🔥 BOT IDENTITY CHECK 🔥\n\n"
-        f"ID: {me.id}\n"
-        f"Username: @{me.username}\n"
-        f"Name: {me.first_name}\n\n"
-        f"If this does NOT match the bot you think you are chatting with,\n"
-        f"then you are talking to a DIFFERENT bot."
+        "👋 Welcome to James Cash Market Education Bot\n\n"
+        "This bot provides FREE educational content about global financial markets.\n\n"
+        "📘 Topics covered:\n"
+        "• Financial market basics\n"
+        "• Economic terminology\n"
+        "• How global markets work\n"
+        "• Risk awareness & education\n\n"
+        "⚠️ Disclaimer:\n"
+        "This bot is for EDUCATIONAL PURPOSES ONLY.\n"
+        "It does NOT provide:\n"
+        "❌ Trading signals\n"
+        "❌ Investment advice\n"
+        "❌ Financial recommendations\n\n"
+        "👇 To continue, join the channel below:",
+        reply_markup=reply_markup
     )
 
 def main():
@@ -23,6 +42,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
