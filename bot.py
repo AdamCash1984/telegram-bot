@@ -1,5 +1,4 @@
 import os
-import asyncio
 from telegram import (
     Update,
     InlineKeyboardButton,
@@ -14,11 +13,24 @@ from telegram.ext import (
 # ================= CONFIG =================
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_URL = "https://t.me/dailysignalsbonanza"
-JOIN_DELAY_SECONDS = 30  # delay before showing join button
+JOIN_DELAY_SECONDS = 30  # delay before join button
 # =========================================
 
 if not BOT_TOKEN:
     raise RuntimeError("BOT_TOKEN environment variable is missing")
+
+# ---------- DELAYED JOB ----------
+async def send_join_button(context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [
+        [InlineKeyboardButton("🚀 Join the Channel", url=CHANNEL_URL)]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    await context.bot.send_message(
+        chat_id=context.job.chat_id,
+        text="If you’d like to explore more content, you can join the channel below:",
+        reply_markup=reply_markup
+    )
 
 # ---------- START COMMAND ----------
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -40,18 +52,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "You can explore educational content directly in this bot."
     )
 
-    # 2️⃣ Delay before CTA (CRITICAL for Ads approval)
-    await asyncio.sleep(JOIN_DELAY_SECONDS)
-
-    # 3️⃣ Join Channel button (SECOND message)
-    keyboard = [
-        [InlineKeyboardButton("🚀 Join the Channel", url=CHANNEL_URL)]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    await update.message.reply_text(
-        "If you’d like to explore more content, you can join the channel below:",
-        reply_markup=reply_markup
+    # 2️⃣ Schedule delayed Join button (RELIABLE)
+    context.job_queue.run_once(
+        send_join_button,
+        when=JOIN_DELAY_SECONDS,
+        chat_id=update.effective_chat.id
     )
 
 # ---------- MAIN ----------
