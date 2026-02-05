@@ -2,25 +2,26 @@ import os
 from telegram import (
     Update,
     InlineKeyboardButton,
-    InlineKeyboardMarkup,
+    InlineKeyboardMarkup
 )
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
-    ContextTypes,
+    ContextTypes
 )
 
-# ================= CONFIG =================
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_URL = "https://t.me/dailysignalsbonanza"
-# =========================================
 
 if not BOT_TOKEN:
-    raise RuntimeError("BOT_TOKEN environment variable is missing")
+    raise RuntimeError("BOT_TOKEN is missing")
 
-# ---------- START COMMAND ----------
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # 1️⃣ FIRST message (Ads-safe, education only)
+    keyboard = [
+        [InlineKeyboardButton("🚀 Join the Channel", url=CHANNEL_URL)]
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
     await update.message.reply_text(
         "👋 Welcome to James Cash Market Education Bot\n\n"
         "This bot provides FREE educational content about global financial markets.\n\n"
@@ -35,27 +36,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "❌ Trading signals\n"
         "❌ Investment advice\n"
         "❌ Financial recommendations\n\n"
-        "You can explore educational content directly in this bot."
+        "👇 You can also join our channel below:",
+        reply_markup=reply_markup
     )
 
-    # 2️⃣ SECOND message (Join button)
-    keyboard = [
-        [InlineKeyboardButton("🚀 Join the Channel", url=CHANNEL_URL)]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    await update.message.reply_text(
-        "If you’d like to explore more content, you can join the channel below:",
-        reply_markup=reply_markup,
-    )
-
-# ---------- MAIN ----------
 def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
-    print("Bot is running...")
     app.run_polling()
 
 if __name__ == "__main__":
     main()
+
 
